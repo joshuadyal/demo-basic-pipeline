@@ -1,5 +1,9 @@
+@Library('my-shared-library') _
+
+
 node {
     stage ("Say hi") {
-        echo "Hello, world!"
+        sayHello()
     }
+    
 }
