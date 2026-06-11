@@ -12,15 +12,18 @@ node {
     }
 
     stage ("Build") {
-        docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside {        
-            withEnv([
-                'DOTNET_CLI_HOME=/tmp',
-                'HOME=/tmp'
-            ]) {
-                sh 'dotnet restore'
-                sh 'dotnet build --no-restore'
-            }
+        docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
+            .inside("""
+                        -e HOME=${env.WORKSPACE}
+                        -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
+                        -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+                    """) {
+            sh 'dotnet restore'
+            sh 'dotnet build --no-restore'
+        
         }
+        
+
     }
 
     stage ("Test") {
