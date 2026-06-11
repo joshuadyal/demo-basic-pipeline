@@ -19,28 +19,20 @@ node {
                         -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
                     """) {
 
-            
-            sh '''
-                echo "USER: $(whoami)"
-                echo "HOME: $HOME"
-                pwd
-                ls -ld $HOME
-                ls -ld .
-            '''
-
-            
             sh 'dotnet restore'
-            // sh 'dotnet build --no-restore'
-        
+            sh 'dotnet build --no-restore'
         }
-        
-
     }
 
-    // stage ("Test") {
-    //     docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside {
-    //         sh 'dotnet test --no-build'
-    //     }
-    // }
-    
+    stage ("Test") {
+        docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
+            .inside("""
+                        -e HOME="${env.WORKSPACE}"
+                        -e DOTNET_CLI_HOME="${env.WORKSPACE}/.dotnet"
+                        -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+                    """) {
+
+            sh 'dotnet test --no-build'
+        }
+    }
 }
