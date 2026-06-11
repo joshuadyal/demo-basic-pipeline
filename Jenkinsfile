@@ -18,6 +18,17 @@ node {
                         -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
                         -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
                     """) {
+
+            
+            sh '''
+                echo "USER: $(whoami)"
+                echo "HOME: $HOME"
+                pwd
+                ls -ld $HOME
+                ls -ld .
+            '''
+
+            
             sh 'dotnet restore'
             sh 'dotnet build --no-restore'
         
