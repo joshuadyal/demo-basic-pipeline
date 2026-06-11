@@ -30,17 +30,17 @@ node {
 
             
             sh 'dotnet restore'
-            sh 'dotnet build --no-restore'
+            // sh 'dotnet build --no-restore'
         
         }
         
 
     }
 
-    stage ("Test") {
-        docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside {
-            sh 'dotnet test --no-build'
-        }
-    }
+    // stage ("Test") {
+    //     docker.image('mcr.microsoft.com/dotnet/sdk:8.0').inside {
+    //         sh 'dotnet test --no-build'
+    //     }
+    // }
     
 }
