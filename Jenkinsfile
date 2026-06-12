@@ -23,9 +23,9 @@ node {
         withCredentials([string(credentialsId: 'jenkins-token', variable: 'JENKINS_TOKEN')]) {
 
             sh '''
-                export PATH="$PATH:$HOME/.dotnet/tools"
+                export PATH="$PATH:$DOTNET_CLI_HOME/.dotnet/tools"
 
-                dotnet tool install --global dotnet-sonarscanner
+                dotnet tool install --global dotnet-sonarscanner || true
 
                 dotnet sonarscanner begin \
                   /k:"demo-dotnet" \
