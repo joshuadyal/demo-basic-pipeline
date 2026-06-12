@@ -11,28 +11,35 @@ node {
         checkout scm
     }
 
-    stage ("Build") {
+    stage("Sonar Scan") {
         docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
             .inside("""
-                        -e HOME="${env.WORKSPACE}"
-                        -e DOTNET_CLI_HOME="${env.WORKSPACE}/.dotnet"
-                        -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-                    """) {
+                -u 1000:1000
+                -e HOME=${env.WORKSPACE}
+                -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
+                -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+            """) {
 
-            sh 'dotnet restore'
-            sh 'dotnet build --no-restore'
-        }
-    }
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
 
-    stage ("Test") {
-        docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
-            .inside("""
-                        -e HOME="${env.WORKSPACE}"
-                        -e DOTNET_CLI_HOME="${env.WORKSPACE}/.dotnet"
-                        -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-                    """) {
+                sh '''
+                    export PATH="$PATH:$HOME/.dotnet/tools"
 
-            sh 'dotnet test --no-build'
+                    dotnet tool install --global dotnet-sonarscanner
+
+                    dotnet sonarscanner begin \
+                    /k:"demo-dotnet" \
+                    /d:sonar.host.url="http://host.docker.internal:9000" \
+                    /d:sonar.login="$SONAR_TOKEN"
+
+                    dotnet restore
+                    dotnet build -c Release --no-restore
+                    dotnet test -c Release --no-build --logger trx
+
+                    dotnet sonarscanner end \
+                    /d:sonar.login="$SONAR_TOKEN"
+                '''
+            }
         }
     }
 }
