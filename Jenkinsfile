@@ -15,8 +15,9 @@ node {
     stage("Sonar Scan") {
     docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
         .inside("""
-            -e HOME="${env.WORKSPACE}"
-            -e DOTNET_CLI_HOME="${env.WORKSPACE}/.dotnet"
+            -u 1000:1000
+            -e HOME=${env.WORKSPACE}
+            -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
             -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         """) {
 
@@ -24,7 +25,7 @@ node {
 
             sh '''
                 apt-get update && apt-get install -y openjdk-21-jre
-                
+
                 export PATH="$PATH:$DOTNET_CLI_HOME/.dotnet/tools"
 
                 dotnet tool install --global dotnet-sonarscanner || true
