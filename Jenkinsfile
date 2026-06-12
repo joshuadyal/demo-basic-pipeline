@@ -15,7 +15,7 @@ node {
     stage("Sonar Scan") {
     docker.image('mcr.microsoft.com/dotnet/sdk:8.0')
         .inside("""
-            -u 1000:1000
+            -u root
             -e HOME=${env.WORKSPACE}
             -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
             -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
