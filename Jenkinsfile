@@ -23,6 +23,8 @@ node {
         withCredentials([string(credentialsId: 'jenkins-token', variable: 'JENKINS_TOKEN')]) {
 
             sh '''
+                apt-get update && apt-get install -y openjdk-21-jre
+                
                 export PATH="$PATH:$DOTNET_CLI_HOME/.dotnet/tools"
 
                 dotnet tool install --global dotnet-sonarscanner || true
