@@ -2,6 +2,7 @@
 Jenkins, .NET and SonarQube
 
 ## Pre-requisites
+- Docker Desktop (or any Docker Daemon)
 - Dockerfiles:
     - Jenkins image
     - .NET image with Java Installed (JDK17)
