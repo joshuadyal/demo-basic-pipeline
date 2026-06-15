@@ -12,7 +12,6 @@ node {
     }
 
 
-    stage("Sonar Scan") {
     docker.image('dotnet-sonar:latest')
         .inside("""
             -u root
@@ -20,28 +19,31 @@ node {
             -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
             -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         """) {
-
-        withCredentials([string(credentialsId: 'jenkins-token', variable: 'JENKINS_TOKEN')]) {
-
-            sh '''
-
-                export PATH="$PATH:$DOTNET_CLI_HOME/.dotnet/tools"
-
-                dotnet tool install --global dotnet-sonarscanner || true
-
-                dotnet sonarscanner begin \
-                  /k:"demo-dotnet" \
-                  /d:sonar.host.url="http://host.docker.internal:9000" \
-                  /d:sonar.login="$JENKINS_TOKEN"
-
-                dotnet restore
-                dotnet build -c Release --no-restore
-                dotnet test -c Release --no-build --logger trx
-
-                dotnet sonarscanner end \
-                  /d:sonar.login="$JENKINS_TOKEN"
-            '''
+ 
+        stage("Restore") {
+            sh 'dotnet restore'
         }
+ 
+        stage("SonarQube Begin") {
+            withSonarQubeEnv('SonarQube') {
+                sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
+            }
+        }
+ 
+        stage("Build") {
+            sh 'dotnet build --no-restore'
+        }
+ 
+        stage("Test") {
+            sh 'dotnet test --no-build'
+        }
+ 
+        stage("SonarQube End") {
+            withSonarQubeEnv('SonarQube') {
+                sh 'dotnet sonarscanner end'
+            }
+        }
+    
     }
-}
+    
 }
