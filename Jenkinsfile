@@ -18,7 +18,8 @@ node {
             -e HOME=${env.WORKSPACE}
             -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
             -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-            -v ~/.nuget:/root/.nuget
+            -v /var/jenkins_home/.nuget:${env.WORKSPACE}/.nuget
+
         """) {
  
         stage("Restore") {
