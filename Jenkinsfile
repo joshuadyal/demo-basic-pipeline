@@ -25,7 +25,7 @@ node {
         }
  
         stage("SonarQube Begin") {
-            withSonarQubeEnv('SonarQubezz') {
+            withSonarQubeEnv('server-sonar') {
                 sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
             }
         }
@@ -39,7 +39,7 @@ node {
         }
  
         stage("SonarQube End") {
-            withSonarQubeEnv('SonarQubezz') {
+            withSonarQubeEnv('server-sonar') {
                 sh 'dotnet sonarscanner end'
             }
         }
