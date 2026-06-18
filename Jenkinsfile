@@ -14,6 +14,7 @@ node {
 
     docker.image('dotnet-sonar:latest')
         .inside("""
+            --network jenkins-net
             -u root
             -e HOME=${env.WORKSPACE}
             -e DOTNET_CLI_HOME=${env.WORKSPACE}/.dotnet
