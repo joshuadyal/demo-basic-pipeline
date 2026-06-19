@@ -25,15 +25,16 @@ node {
         stage ("Trivy filesystem scan") {
             sh '''
                 trivy fs \
-                --format table \
-                --output trivy-report.txt \
+                --format template \
+                --template "@/usr/local/share/trivy/templates/html.tpl" \
+                --output trivy-report.html \
                 .
             '''
         }
 
         stage ("Archive Trivy FS scan") {
             
-            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: false
+            archiveArtifacts artifacts: 'trivy-report.html', allowEmptyArchive: false
 
         }
  

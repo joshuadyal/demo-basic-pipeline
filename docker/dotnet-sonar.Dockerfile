@@ -5,6 +5,12 @@ RUN apt-get update && apt-get install -y openjdk-17-jre curl
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
     | sh -s -- -b /usr/local/bin
 
+# Add HTML template
+RUN mkdir -p /usr/local/share/trivy/templates
+
+RUN curl -o /usr/local/share/trivy/templates/html.tpl \
+    https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
