@@ -25,9 +25,21 @@ node {
 
         """) {
 
+        
         stage ("Trivy filesystem scan") {
-            sh 'trivy fs .'
+            sh '''
+                trivy fs \
+                --format template \
+                --template "@/usr/local/share/trivy/templates/html.tpl" \
+                --output trivy-report.html \
+                .
+            '''
         }
+
+        stage("Archive trivy FS scan report") {
+            archiveArtifacts artifacts: 'trivy-report.html', allowEmptyArchive: false
+        }
+
  
         stage("Restore") {
             sh 'dotnet restore'
