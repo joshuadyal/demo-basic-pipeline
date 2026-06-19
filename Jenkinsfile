@@ -11,9 +11,6 @@ node {
         checkout scm
     }
 
-    
-
-
     docker.image('dotnet-sonar:latest')
         .inside("""
             --network jenkins-net
@@ -63,7 +60,13 @@ node {
                 sh 'dotnet sonarscanner end'
             }
         }
-    
+
+        
+        stage("Quality Gate") {
+            timeout(time: 10, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
     }
-    
 }
