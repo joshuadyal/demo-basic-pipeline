@@ -25,15 +25,15 @@ node {
         stage ("Trivy filesystem scan") {
             sh '''
                 trivy fs \
-                --format json \
-                --output trivy-report.json \
+                --format table \
+                --output trivy-report.txt \
                 .
             '''
         }
 
         stage ("Archive Trivy FS scan") {
             
-            archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: false
+            archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: false
 
         }
  
