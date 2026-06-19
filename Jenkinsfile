@@ -11,6 +11,8 @@ node {
         checkout scm
     }
 
+    
+
 
     docker.image('dotnet-sonar:latest')
         .inside("""
@@ -22,6 +24,10 @@ node {
             -v /var/jenkins_home/.nuget:${env.WORKSPACE}/.nuget
 
         """) {
+
+        stage ("Trivy filesystem scan") {
+            sh 'trivy fs .'
+        }
  
         stage("Restore") {
             sh 'dotnet restore'
