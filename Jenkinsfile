@@ -30,7 +30,6 @@ node {
                 --output trivy-filesystem-report.html \
                 --exit-code 1 \
                 --severity HIGH,CRITICAL \
-
                 .
             '''
         }
