@@ -39,6 +39,19 @@ node {
             archiveArtifacts artifacts: 'trivy-filesystem-report.html', allowEmptyArchive: false
 
         }
+
+        
+        stage("Publish Trivy FS Report") {
+            publishHTML([
+                reportDir: '.',
+                reportFiles: 'trivy-filesystem-report.html',
+                reportName: 'Trivy FS Scan',
+                keepAll: true,
+                alwaysLinkToLastBuild: true,
+                allowMissing: false
+            ])
+        }
+
  
         stage("Restore") {
             sh 'dotnet restore'
@@ -71,13 +84,11 @@ node {
         //     }
         // }
 
-        
-// ✅ ✅ NEW: Build application image
+    
         stage("Build App Image") {
             sh 'docker build -t demo-dotnet-app -f docker/app.Dockerfile .'
         }
 
-        // ✅ ✅ NEW: Trivy image scan
         stage("Trivy Image Scan") {
             sh '''
                 trivy image \
@@ -90,10 +101,21 @@ node {
             '''
         }
 
-        // ✅ ✅ NEW: Archive image scan report
         stage("Archive Trivy Image Scan") {
             archiveArtifacts artifacts: 'trivy-image-report.html', allowEmptyArchive: false
         }
+
+        
+        stage("Publish Trivy Image Report") {
+            publishHTML([
+                reportDir: '.',
+                reportFiles: 'trivy-image-report.html',
+                reportName: 'Trivy Image Scan',
+                keepAll: true,
+                alwaysLinkToLastBuild: true
+            ])
+        }
+
 
 
     }
