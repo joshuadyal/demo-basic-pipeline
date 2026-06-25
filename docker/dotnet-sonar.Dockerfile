@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0
 
-RUN apt-get update && apt-get install -y openjdk-17-jre curl
+RUN apt-get update && apt-get install -y openjdk-17-jre curl docker.io
 
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
     | sh -s -- -b /usr/local/bin
