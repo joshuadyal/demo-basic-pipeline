@@ -57,11 +57,11 @@ node {
             sh 'dotnet restore'
         }
  
-        // stage("SonarQube Begin") {
-        //     withSonarQubeEnv('server-sonar') {
-        //         sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
-        //     }
-        // }
+        stage("SonarQube Begin") {
+            withSonarQubeEnv('server-sonar') {
+                sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
+            }
+        }
  
         stage("Build") {
             sh 'dotnet build --no-restore'
@@ -71,18 +71,18 @@ node {
             sh 'dotnet test --no-build'
         }
  
-        // stage("SonarQube End") {
-        //     withSonarQubeEnv('server-sonar') {
-        //         sh 'dotnet sonarscanner end'
-        //     }
-        // }
+        stage("SonarQube End") {
+            withSonarQubeEnv('server-sonar') {
+                sh 'dotnet sonarscanner end'
+            }
+        }
 
         
-        // stage("Quality Gate") {
-        //     timeout(time: 10, unit: 'MINUTES') {
-        //         waitForQualityGate abortPipeline: false
-        //     }
-        // }
+        stage("Quality Gate") {
+            timeout(time: 10, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: false
+            }
+        }
 
     
         stage("Build App Image") {
