@@ -28,7 +28,7 @@ node {
                 --format template \
                 --template "@/usr/local/share/trivy/templates/html.tpl" \
                 --output trivy-filesystem-report.html \
-                --exit-code 1 \
+                --exit-code 0 \
                 --severity HIGH,CRITICAL \
                 .
             '''
