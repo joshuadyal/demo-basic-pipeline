@@ -69,5 +69,28 @@ node {
             }
         }
 
+        
+// ✅ ✅ NEW: Build application image
+        stage("Build App Image") {
+            sh 'docker build -t demo-dotnet-app -f docker/app.Dockerfile .'
+        }
+
+        // ✅ ✅ NEW: Trivy image scan
+        stage("Trivy Image Scan") {
+            sh '''
+                trivy image \
+                --format template \
+                --template "@/usr/local/share/trivy/templates/html.tpl" \
+                --output trivy-image-report.html \
+                demo-dotnet-app
+            '''
+        }
+
+        // ✅ ✅ NEW: Archive image scan report
+        stage("Archive Trivy Image Scan") {
+            archiveArtifacts artifacts: 'trivy-image-report.html', allowEmptyArchive: false
+        }
+
+
     }
 }
