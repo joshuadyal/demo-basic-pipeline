@@ -27,14 +27,17 @@ node {
                 trivy fs \
                 --format template \
                 --template "@/usr/local/share/trivy/templates/html.tpl" \
-                --output trivy-report.html \
+                --output trivy-filesystem-report.html \
+                --exit-code 1 \
+                --severity HIGH,CRITICAL \
+
                 .
             '''
         }
 
         stage ("Archive Trivy FS scan") {
             
-            archiveArtifacts artifacts: 'trivy-report.html', allowEmptyArchive: false
+            archiveArtifacts artifacts: 'trivy-filesystem-report.html', allowEmptyArchive: false
 
         }
  
@@ -82,6 +85,8 @@ node {
                 --format template \
                 --template "@/usr/local/share/trivy/templates/html.tpl" \
                 --output trivy-image-report.html \
+                --exit-code 1 \
+                --severity HIGH,CRITICAL \
                 demo-dotnet-app
             '''
         }
