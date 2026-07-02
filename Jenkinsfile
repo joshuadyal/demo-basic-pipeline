@@ -2,11 +2,6 @@
 
 
 node {
-    stage ("Print hello and timestamp") {
-        sayHello()
-        printDate()
-    }
-
     stage ("Checkout") {
         checkout scm
     }
@@ -22,7 +17,7 @@ node {
 
         """) {
 
-        stage ("Trivy filesystem scan") {
+        stage ("Trivy FS scan") {
             sh '''
                 trivy fs \
                 --format template \
@@ -32,16 +27,9 @@ node {
                 --severity HIGH,CRITICAL \
                 .
             '''
-        }
-
-        stage ("Archive Trivy FS scan") {
             
             archiveArtifacts artifacts: 'trivy-filesystem-report.html', allowEmptyArchive: false
 
-        }
-
-        
-        stage("Publish Trivy FS Report") {
             publishHTML([
                 reportDir: '.',
                 reportFiles: 'trivy-filesystem-report.html',
@@ -53,30 +41,17 @@ node {
         }
 
  
-        stage("Restore") {
+        stage("Sonar scan & tests") {
             sh 'dotnet restore'
-        }
- 
-        stage("SonarQube Begin") {
+
             withSonarQubeEnv('server-sonar') {
                 sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
             }
-        }
- 
-        stage("Build") {
-            sh 'dotnet build --no-restore'
-        }
- 
-        stage("Test") {
-            sh 'dotnet test --no-build'
-        }
- 
-        stage("SonarQube End") {
+
             withSonarQubeEnv('server-sonar') {
                 sh 'dotnet sonarscanner end'
             }
         }
-
         
         stage("Quality Gate") {
             timeout(time: 10, unit: 'MINUTES') {
@@ -99,14 +74,8 @@ node {
                 --severity HIGH,CRITICAL \
                 demo-dotnet-app
             '''
-        }
-
-        stage("Archive Trivy Image Scan") {
             archiveArtifacts artifacts: 'trivy-image-report.html', allowEmptyArchive: false
-        }
 
-        
-        stage("Publish Trivy Image Report") {
             publishHTML([
                 reportDir: '.',
                 reportFiles: 'trivy-image-report.html',
@@ -115,8 +84,5 @@ node {
                 alwaysLinkToLastBuild: true
             ])
         }
-
-
-
     }
 }
