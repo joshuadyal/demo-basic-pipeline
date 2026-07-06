@@ -60,11 +60,10 @@ node {
         }
 
     
-        stage("Build App Image") {
-            sh 'docker build -t demo-dotnet-app -f docker/app.Dockerfile .'
-        }
 
         stage("Trivy Image Scan") {
+            sh 'docker build -t demo-dotnet-app -f docker/app.Dockerfile .'
+
             sh '''
                 trivy image \
                 --format template \
@@ -83,6 +82,8 @@ node {
                 keepAll: true,
                 alwaysLinkToLastBuild: true
             ])
+
+            sh 'docker rmi demo-dotnet-app || true'
         }
     }
 }
