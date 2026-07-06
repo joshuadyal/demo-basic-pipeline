@@ -48,6 +48,11 @@ node {
                 sh 'dotnet sonarscanner begin /k:"demo-dotnet"'
             }
 
+
+            sh 'dotnet build --no-restore'
+            
+            sh 'dotnet test --no-build'
+
             withSonarQubeEnv('server-sonar') {
                 sh 'dotnet sonarscanner end'
             }
